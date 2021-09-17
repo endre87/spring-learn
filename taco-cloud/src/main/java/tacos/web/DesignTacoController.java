@@ -1,8 +1,6 @@
-// tag::head[]
 package tacos.web;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,56 +12,64 @@ import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
-import lombok.extern.slf4j.Slf4j;
 import tacos.Ingredient;
 import tacos.Ingredient.Type;
+import tacos.Order;
 import tacos.Taco;
 import tacos.data.IngredientRepository;
+import tacos.data.TacoRepository;
 
-@Slf4j
+// tag::classShell[]
 @Controller
 @RequestMapping("/design")
 @SessionAttributes("order")
 public class DesignTacoController {
 
+//end::classShell[]
 
-//end::head[]
-
+    //tag::bothRepoProperties[]
+//tag::ingredientRepoProperty[]
     private final IngredientRepository ingredientRepo;
 
+    //end::ingredientRepoProperty[]
+    private TacoRepository designRepo;
+
+//end::bothRepoProperties[]
+
+  /*
+// tag::ingredientRepoOnlyCtor[]
+  @Autowired
+  public DesignTacoController(IngredientRepository ingredientRepo) {
+    this.ingredientRepo = ingredientRepo;
+  }
+// end::ingredientRepoOnlyCtor[]
+   */
+
+    //tag::bothRepoCtor[]
     @Autowired
-    public DesignTacoController(IngredientRepository ingredientRepo) {
+    public DesignTacoController(
+            IngredientRepository ingredientRepo,
+            TacoRepository designRepo) {
         this.ingredientRepo = ingredientRepo;
+        this.designRepo = designRepo;
     }
 
-//    @ModelAttribute
-//    public void addIngredientsToModel(Model model) {
-//        List<Ingredient> ingredients = Arrays.asList(
-//                new Ingredient("FLTO", "Flour Tortilla", Type.WRAP),
-//                new Ingredient("COTO", "Corn Tortilla", Type.WRAP),
-//                new Ingredient("GRBF", "Ground Beef", Type.PROTEIN),
-//                new Ingredient("CARN", "Carnitas", Type.PROTEIN),
-//                new Ingredient("TMTO", "Diced Tomatoes", Type.VEGGIES),
-//                new Ingredient("LETC", "Lettuce", Type.VEGGIES),
-//                new Ingredient("CHED", "Cheddar", Type.CHEESE),
-//                new Ingredient("JACK", "Monterrey Jack", Type.CHEESE),
-//                new Ingredient("SLSA", "Salsa", Type.SAUCE),
-//                new Ingredient("SRCR", "Sour Cream", Type.SAUCE)
-//        );
-//
-//        Type[] types = Ingredient.Type.values();
-//        for (Type type : types) {
-//            model.addAttribute(type.toString().toLowerCase(),
-//                    filterByType(ingredients, type));
-//        }
-//    }
+    //end::bothRepoCtor[]
+
+    // tag::modelAttributes[]
+    @ModelAttribute(name = "order")
+    public Order order() {
+        return new Order();
+    }
 
     @ModelAttribute(name = "taco")
     public Taco taco() {
         return new Taco();
     }
 
-    //tag::showDesignForm[]
+    // end::modelAttributes[]
+    // tag::showDesignForm[]
+
     @GetMapping
     public String showDesignForm(Model model) {
         List<Ingredient> ingredients = new ArrayList<>();
@@ -77,37 +83,25 @@ public class DesignTacoController {
 
         return "design";
     }
-    //end::showDesignForm[]
+//end::showDesignForm[]
 
-/*
     //tag::processDesign[]
     @PostMapping
-    public String processDesign(Taco design) {
-        // Save the taco design...
-        // We'll do this in chapter 3
-        log.info("Processing design: " + design);
+    public String processDesign(
+            @Valid Taco design, Errors errors,
+            @ModelAttribute Order order) {
 
-        return "redirect:/orders/current";
-    }
-    //end::processDesign[]
-*/
-
-    //tag::processDesignValidated[]
-    @PostMapping
-    public String processDesign(@Valid @ModelAttribute("design") Taco design, Errors errors) {
         if (errors.hasErrors()) {
             return "design";
         }
 
-        // Save the taco design...
-        // We'll do this in chapter 3
-        log.info("Processing design: " + design);
+        Taco saved = designRepo.save(design);
+        order.addDesign(saved);
 
         return "redirect:/orders/current";
     }
-//end::processDesignValidated[]
+    //end::processDesign[]
 
-    //tag::filterByType[]
     private List<Ingredient> filterByType(
             List<Ingredient> ingredients, Type type) {
         return ingredients
@@ -116,7 +110,14 @@ public class DesignTacoController {
                 .collect(Collectors.toList());
     }
 
-//end::filterByType[]
-// tag::foot[]
+  /*
+//tag::classShell[]
+
+  ...
+
+//end::classShell[]
+   */
+//tag::classShell[]
+
 }
-// end::foot[]
+//end::classShell[]
