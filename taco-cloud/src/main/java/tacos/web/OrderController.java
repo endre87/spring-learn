@@ -19,9 +19,9 @@ public class OrderController {
 
     private OrderRepository orderRepo;
 
-//    public OrderController(OrderRepository orderRepo) {
-//        this.orderRepo = orderRepo;
-//    }
+    public OrderController(OrderRepository orderRepo) {
+        this.orderRepo = orderRepo;
+    }
 
     @GetMapping("/current")
     public String orderForm() {
@@ -35,7 +35,7 @@ public class OrderController {
             return "orderForm";
         }
 
-//        orderRepo.save(order);
+        orderRepo.save(order);
         sessionStatus.setComplete();
 
         return "redirect:/";
