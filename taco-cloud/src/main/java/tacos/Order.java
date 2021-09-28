@@ -53,6 +53,10 @@ public class Order implements Serializable {
     private String ccCVV;
 
     @ManyToMany(targetEntity=Taco.class)
+    @JoinTable(
+            name = "Taco_Order_Tacos",
+            joinColumns = @JoinColumn(name = "tacoorder"),
+            inverseJoinColumns = @JoinColumn(name = "taco"))
     private List<Taco> tacos = new ArrayList<>();
 
     @PrePersist
