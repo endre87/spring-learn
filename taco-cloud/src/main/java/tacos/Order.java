@@ -26,6 +26,8 @@ public class Order implements Serializable {
 
     private Date placedAt;
 
+    @ManyToOne
+    private User user;
 
     @NotBlank(message="Delivery name is required")
     private String deliveryName;
@@ -59,13 +61,13 @@ public class Order implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "taco"))
     private List<Taco> tacos = new ArrayList<>();
 
+    public void addDesign(Taco design) {
+        this.tacos.add(design);
+    }
+
     @PrePersist
     void placedAt() {
         this.placedAt = new Date();
     }
 
-    public void addDesign(Taco design) {
-        this.tacos.add(design);
-    }
 }
-

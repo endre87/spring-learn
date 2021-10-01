@@ -1,26 +1,20 @@
 //tag::securityConfigOuterClass[]
 package tacos.security;
 
-import org.springframework.context.annotation.Bean;
-//end::securityConfigOuterClass[]
-//tag::baseBonesImports[]
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.web
-        .configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web
-        .configuration.WebSecurityConfigurerAdapter;
-//end::baseBonesImports[]
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.config.annotation
-        .authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.web
-        .builders.HttpSecurity;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.LdapShaPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.password.StandardPasswordEncoder;
+
+//end::securityConfigOuterClass[]
+//tag::baseBonesImports[]
+//end::baseBonesImports[]
 
 //tag::securityConfigOuterClass[]
 
@@ -32,21 +26,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //end::securityConfigOuterClass[]
 
     //tag::customUserDetailsService[]
-//    @Autowired
-//    private UserDetailsService userDetailsService;
+    @Autowired
+    private UserDetailsService userDetailsService;
 
 //end::customUserDetailsService[]
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http
-                .authorizeRequests()
-                .anyRequest().fullyAuthenticated()
-                .and()
-                .formLogin();
-    }
 
-/*
+
     //tag::configureHttpSecurity[]
     //tag::authorizeRequests[]
     //tag::customLoginPage[]
@@ -54,20 +40,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers("/design", "/orders")
+                .antMatchers("/design", "/order**")
+//                .hasRole("ROLE_USER")
                 .access("hasRole('ROLE_USER')")
                 .antMatchers("/", "/**").access("permitAll")
                 //end::authorizeRequests[]
 
                 .and()
-                .formLogin()
-                .loginPage("/login")
+                    .formLogin()
+                        .loginPage("/login")
                 //end::customLoginPage[]
 
                 // tag::enableLogout[]
                 .and()
-                .logout()
-                .logoutSuccessUrl("/")
+                    .logout()
+                        .logoutSuccessUrl("/")
                 // end::enableLogout[]
 
                 // Make H2-Console non-secured; for debug purposes
@@ -92,20 +79,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //end::configureHttpSecurity[]
 //end::authorizeRequests[]
 //end::customLoginPage[]
-*/
-  /*
-  //tag::customUserDetailsService[]
-  @Override
-  protected void configure(AuthenticationManagerBuilder auth)
-      throws Exception {
 
-    auth
-      .userDetailsService(userDetailsService);
-    
-  }
-  //end::customUserDetailsService[]
-  
-   */
 
     //tag::customUserDetailsService_withPasswordEncoder[]
     @Bean
@@ -114,15 +88,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
 
-//    @Override
-//    protected void configure(AuthenticationManagerBuilder auth)
-//            throws Exception {
-//
-//        auth
-//                .userDetailsService(userDetailsService)
-//                .passwordEncoder(encoder());
-//
-//    }
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth
+                .userDetailsService(userDetailsService)
+                .passwordEncoder(encoder());
+
+    }
     //end::customUserDetailsService_withPasswordEncoder[]
 
 //
@@ -213,7 +185,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //
 // LDAP Authentication example
 //
-
+/*
 //tag::configureAuthentication_ldap[]
 @Override
 public void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -229,7 +201,7 @@ public void configure(AuthenticationManagerBuilder auth) throws Exception {
             .passwordAttribute("adminpassword");
 }
 //end::configureAuthentication_ldap[]
-
+*/
 
 //tag::securityConfigOuterClass[]
 
