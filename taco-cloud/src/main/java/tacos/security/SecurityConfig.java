@@ -32,7 +32,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //end::customUserDetailsService[]
 
 
-
+/*
     //tag::configureHttpSecurity[]
     //tag::authorizeRequests[]
     //tag::customLoginPage[]
@@ -79,7 +79,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //end::configureHttpSecurity[]
 //end::authorizeRequests[]
 //end::customLoginPage[]
-
+*/
 
     //tag::customUserDetailsService_withPasswordEncoder[]
     @Bean
@@ -87,7 +87,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return new StandardPasswordEncoder("53cr3t");
     }
 
-
+/*
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth
@@ -96,11 +96,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     }
     //end::customUserDetailsService_withPasswordEncoder[]
-
+*/
 //
 // IN MEMORY AUTHENTICATION EXAMPLE
 //
-/*
+
 //tag::configureAuthentication_inMemory[]
   @Override
   protected void configure(AuthenticationManagerBuilder auth)
@@ -118,7 +118,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     
   }
 //end::configureAuthentication_inMemory[]
-*/
+
 
 //
 // JDBC Authentication example

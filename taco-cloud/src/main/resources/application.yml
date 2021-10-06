@@ -1,0 +1,17 @@
+#  $ keytool -keystore mykeys.jks -genkey -alias tomcat -keyalg RSA
+#server:
+#  port: 8443
+#  ssl:
+#    key-store: file:///C:/Users/abiro/Downloads/mytacokey.jks
+#    key-store-password: letmein
+#    key-password: letmein
+
+logging:
+  level:
+    root: INFO
+    org.springframework.security: DEBUG
+    tacos: INFO
+
+taco:
+  orders:
+    pageSize: 10
