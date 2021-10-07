@@ -1,3 +1,5 @@
+# default properties for all profiles
+
 #  $ keytool -keystore mykeys.jks -genkey -alias tomcat -keyalg RSA
 #server:
 #  port: 8443
@@ -15,3 +17,7 @@ logging:
 taco:
   orders:
     pageSize: 10
+
+#spring:
+#  profiles:
+#    active: prod
