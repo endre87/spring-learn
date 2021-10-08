@@ -34,6 +34,7 @@ public class User implements UserDetails {
     private final String state;
     private final String zip;
     private final String phoneNumber;
+    private final boolean enabled;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

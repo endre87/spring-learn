@@ -1,6 +1,8 @@
 //tag::securityConfigOuterClass[]
 package tacos.security;
 
+import javax.sql.DataSource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,7 +34,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //end::customUserDetailsService[]
 
 
-/*
+
     //tag::configureHttpSecurity[]
     //tag::authorizeRequests[]
     //tag::customLoginPage[]
@@ -41,7 +43,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 .antMatchers("/design", "/order**")
-//                .hasRole("ROLE_USER")
                 .access("hasRole('ROLE_USER')")
                 .antMatchers("/", "/**").access("permitAll")
                 //end::authorizeRequests[]
@@ -49,6 +50,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                     .formLogin()
                         .loginPage("/login")
+                        .defaultSuccessUrl("/design")
                 //end::customLoginPage[]
 
                 // tag::enableLogout[]
@@ -79,7 +81,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //end::configureHttpSecurity[]
 //end::authorizeRequests[]
 //end::customLoginPage[]
-*/
+
 
     //tag::customUserDetailsService_withPasswordEncoder[]
     @Bean
@@ -100,7 +102,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //
 // IN MEMORY AUTHENTICATION EXAMPLE
 //
-
+/*
 //tag::configureAuthentication_inMemory[]
   @Override
   protected void configure(AuthenticationManagerBuilder auth)
@@ -118,23 +120,24 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     
   }
 //end::configureAuthentication_inMemory[]
-
+*/
 
 //
 // JDBC Authentication example
 //
-/*
+
 //tag::configureAuthentication_jdbc[]
   @Autowired
   DataSource dataSource;
-  
+ /*
   @Override
   protected void configure(AuthenticationManagerBuilder auth)
       throws Exception {
     
     auth
       .jdbcAuthentication()
-        .dataSource(dataSource);
+        .dataSource(dataSource)
+            .passwordEncoder(encoder());
     
   }
 //end::configureAuthentication_jdbc[]
@@ -160,7 +163,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //end::configureAuthentication_jdbc_withQueries[]
 */
 
-/*
+
 //tag::configureAuthentication_jdbc_passwordEncoder[]
   @Override
   protected void configure(AuthenticationManagerBuilder auth)
@@ -170,16 +173,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
       .jdbcAuthentication()
         .dataSource(dataSource)
         .usersByUsernameQuery(
-            "select username, password, enabled from Users " +
+            "select username, password, enabled from User " +
             "where username=?")
-        .authoritiesByUsernameQuery(
-            "select username, authority from UserAuthorities " +
-            "where username=?")
-        .passwordEncoder(new StandardPasswordEncoder("53cr3t");
+//        .authoritiesByUsernameQuery(
+//            "select username, authority from UserAuthorities " +
+//            "where username=?")
+        .passwordEncoder(encoder());
     
   }
 //end::configureAuthentication_jdbc_passwordEncoder[]
-*/
+
 
 
 //
