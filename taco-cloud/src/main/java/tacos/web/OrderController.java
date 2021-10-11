@@ -1,22 +1,21 @@
 package tacos.web;
+
+import java.security.Principal;
+
 import javax.validation.Valid;
 
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
 
 import tacos.Order;
 import tacos.User;
 import tacos.data.OrderRepository;
+import tacos.data.UserRepository;
 
 // tag::OrderController_base[]
 
@@ -25,7 +24,9 @@ import tacos.data.OrderRepository;
 @SessionAttributes("order")
 public class OrderController {
 
-    private OrderRepository orderRepo;
+    private final OrderRepository orderRepo;
+
+    private final UserRepository userRepo;
 
 //end::OrderController_base[]
 
@@ -33,15 +34,20 @@ public class OrderController {
     private OrderProps props;
 
     public OrderController(OrderRepository orderRepo,
-                           OrderProps props) {
+                           OrderProps props, UserRepository userRepo) {
         this.orderRepo = orderRepo;
         this.props = props;
+        this.userRepo = userRepo;
     }
     // end::ordersForUser_paged_withHolder[]
 
     @GetMapping("/current")
-    public String orderForm(@AuthenticationPrincipal User user,
-                            @ModelAttribute Order order) {
+    public String orderForm(/*Authentication authentication,*/
+            Principal principal,
+            @ModelAttribute Order order) {
+        // Throws: java.lang.ClassCastException: org.springframework.security.core.userdetails.User cannot be cast to tacos.User
+        // User user = (User) authentication.getPrincipal();
+        User user = userRepo.findByUsername(principal.getName());
         if (order.getDeliveryName() == null) {
             order.setDeliveryName(user.getFullname());
         }
@@ -64,7 +70,7 @@ public class OrderController {
     @PostMapping
     public String processOrder(@Valid Order order, Errors errors,
                                SessionStatus sessionStatus,
-                               @AuthenticationPrincipal User user) {
+            /*@AuthenticationPrincipal */User user) {
 
         if (errors.hasErrors()) {
             return "orderForm";
@@ -90,8 +96,9 @@ public class OrderController {
     // tag::ordersForUser_paged_withHolder[]
     @GetMapping
     public String ordersForUser(
-            @AuthenticationPrincipal User user, Model model) {
-
+//            @AuthenticationPrincipal User user // - is null
+            Model model, Principal principal) {
+        User user = userRepo.findByUsername(principal.getName());
         Pageable pageable = PageRequest.of(0, props.getPageSize());
         model.addAttribute("orders",
                 orderRepo.findByUserOrderByPlacedAtDesc(user, pageable));
